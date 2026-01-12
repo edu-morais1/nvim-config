@@ -1,0 +1,92 @@
+return {
+  -- Catppuccin com alto contraste
+  {
+    "catppuccin/nvim",
+    name = "catppuccin",
+    priority = 1000,
+    opts = {
+      flavour = "mocha",
+      transparent_background = false,
+      term_colors = true,
+      dim_inactive = {
+        enabled = true,
+        shade = "dark",
+        percentage = 0.15,
+      },
+      styles = {
+        comments = { "italic" },
+        conditionals = { "bold" },
+        loops = { "bold" },
+        functions = { "bold" },
+        keywords = { "italic" },
+        strings = {},
+        variables = {},
+        numbers = {},
+        booleans = { "bold" },
+        properties = {},
+        types = { "bold" },
+        operators = {},
+      },
+      color_overrides = {
+        mocha = {
+          base = "#000000",
+          mantle = "#0a0a0a",
+          crust = "#050505",
+        },
+      },
+      custom_highlights = function(colors)
+        return {
+          Normal = { fg = colors.text, bg = colors.base },
+          Comment = { fg = "#7f849c", style = { "italic" } },
+          Search = { bg = colors.yellow, fg = colors.base, style = { "bold" } },
+          IncSearch = { bg = colors.red, fg = colors.base, style = { "bold" } },
+          CursorLine = { bg = "#1a1a1a" },
+          CursorLineNr = { fg = colors.yellow, style = { "bold" } },
+          Visual = { bg = "#2a2a3a", style = { "bold" } },
+        }
+      end,
+      integrations = {
+        cmp = true,
+        gitsigns = true,
+        nvimtree = true,
+        treesitter = true,
+        notify = true,
+        mini = { enabled = true },
+        noice = true,
+        telescope = { enabled = true },
+        which_key = true,
+      },
+    },
+  },
+
+  -- Gruvbox Material com contraste hard
+  {
+    "sainnhe/gruvbox-material",
+    priority = 1000,
+    config = function()
+      -- Configurações globais do Gruvbox Material
+      vim.g.gruvbox_material_background = "hard"
+      vim.g.gruvbox_material_better_performance = 1
+      vim.g.gruvbox_material_enable_italic = 1
+      vim.g.gruvbox_material_enable_bold = 1
+      vim.g.gruvbox_material_transparent_background = 0
+      vim.g.gruvbox_material_foreground = "original"
+      vim.g.gruvbox_material_statusline_style = "original"
+      vim.g.gruvbox_material_visual = "reverse"
+      vim.g.gruvbox_material_current_word = "bold"
+
+      -- Ajustes de contraste extras
+      vim.g.gruvbox_material_colors_override = {
+        bg0 = { "#000000", "234" },
+      }
+    end,
+  },
+
+  -- Configurar LazyVim para usar Catppuccin como padrão
+  {
+    "LazyVim/LazyVim",
+    opts = {
+      colorscheme = "catppuccin", -- Tema padrão ao iniciar
+    },
+  },
+}
