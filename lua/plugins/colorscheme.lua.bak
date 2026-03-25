@@ -1,5 +1,4 @@
 return {
-  -- Catppuccin com alto contraste
   {
     "catppuccin/nvim",
     name = "catppuccin",
@@ -62,7 +61,6 @@ return {
   -- Gruvbox Material com contraste hard
   {
     "sainnhe/gruvbox-material",
-    priority = 1000,
     config = function()
       -- Configurações globais do Gruvbox Material
       vim.g.gruvbox_material_background = "hard"
@@ -87,6 +85,10 @@ return {
     "LazyVim/LazyVim",
     opts = {
       colorscheme = "catppuccin", -- Tema padrão ao iniciar
+      opts = {
+        flavour = "mocha",
+        priority = 1000,
+      },
     },
   },
 }

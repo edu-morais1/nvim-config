@@ -1,25 +1,19 @@
 return {
   -- BearTheme inspirado no VSCode
   {
-    "folke/tokyonight.nvim",
-    enabled = false, -- Desabilitar se não quiser conflito
-  },
-
-  {
     "catppuccin/nvim",
     name = "catppuccin",
     priority = 1000,
+    lazy = false, -- Carrega na inicialização, não lazy
     opts = {
       flavour = "mocha",
       transparent_background = false,
       term_colors = true,
-
       dim_inactive = {
         enabled = true,
         shade = "dark",
         percentage = 0.20,
       },
-
       styles = {
         comments = { "italic" },
         conditionals = { "bold" },
@@ -34,121 +28,60 @@ return {
         types = { "bold" },
         operators = {},
       },
-
-      -- Cores customizadas baseadas no BearTheme
       color_overrides = {
         mocha = {
-          -- Backgrounds (preto profundo como BearTheme)
-          base = "#010002", -- editor.background
-          mantle = "#090011", -- sideBar.background
-          crust = "#050007", -- activityBar.background
+          base = "#000000",
+          mantle = "#0a0a0a",
+          crust = "#050505",
 
           -- Foregrounds
-          text = "#eeffff", -- editor.foreground
-          subtext1 = "#c0b2d6",
-          subtext0 = "#b4befe",
+          text = "#eeffff",
 
-          -- Accent colors (roxos e rosas vibrantes)
-          mauve = "#cc00ff", -- Border color
-          pink = "#f5004a", -- Operators/punctuation
-          flamingo = "#f07178", -- Tags
-
-          -- Core colors
-          red = "#FF5370", -- Invalid/errors
-          maroon = "#fc0f36",
-          peach = "#F78C6C",
+          -- Accent colors (neon)
+          mauve = "#cc00ff", -- Border/Roxo
+          pink = "#f5004a", -- Operators
+          green = "#00ff37", -- Keywords (Verde Neon)
           yellow = "#ffe449", -- Classes
-          green = "#00ff37", -- Keywords
           teal = "#00c5b5", -- Strings
-          sky = "#00b7ff", -- Entity types
-          sapphire = "#82AAFF",
-          blue = "#094bff",
-          lavender = "#C792EA", -- Attributes
-
-          -- Surface colors
-          surface0 = "#0a001b", -- Tab background
-          surface1 = "#0f0027", -- Title bar
-          surface2 = "#3b0032", -- Hover
-          overlay0 = "#546E7A", -- Comments
-          overlay1 = "#65737E",
           overlay2 = "#7802ff", -- Variables
         },
       },
 
       custom_highlights = function(colors)
         return {
-          -- Editor principal
+          -- Editor e UI
           Normal = { fg = colors.text, bg = colors.base },
-          NormalFloat = { fg = colors.text, bg = colors.mantle },
-
-          -- Comentários
-          Comment = { fg = colors.overlay0, style = { "italic" } },
-
-          -- Keywords (verde neon)
-          Keyword = { fg = colors.green, style = { "bold" } },
-          Conditional = { fg = colors.green, style = { "bold" } },
-          Repeat = { fg = colors.green, style = { "bold" } },
-
-          -- Funções (roxo)
-          Function = { fg = "#8400ff", style = { "bold" } },
-
-          -- Variáveis (roxo claro)
-          Variable = { fg = colors.overlay2 },
-
-          -- Strings (ciano)
-          String = { fg = colors.teal },
-
-          -- Números (verde claro)
-          Number = { fg = "#71f76c" },
-          Constant = { fg = "#71f76c" },
-
-          -- Classes (amarelo)
-          Type = { fg = colors.yellow },
-
-          -- Operators (rosa)
-          Operator = { fg = colors.pink },
-
-          -- Busca com contraste alto
+          Comment = { fg = "#7f849c", style = { "italic" } },
           Search = { bg = colors.yellow, fg = colors.base, style = { "bold" } },
           IncSearch = { bg = colors.red, fg = colors.base, style = { "bold" } },
+          CursorLine = { bg = "#1a1a1a" },
+          CursorLineNr = { fg = colors.yellow, style = { "bold" } },
+          Visual = { bg = "#2a2a3a", style = { "bold" } },
 
-          -- Linha atual
-          CursorLine = { bg = "#1a001f" },
-          CursorLineNr = { fg = colors.mauve, style = { "bold" } },
-
-          -- Visual selection (roxo)
-          Visual = { bg = "#3c005f", style = { "bold" } },
-
-          -- Status line
-          StatusLine = { fg = colors.text, bg = colors.surface1 },
-
-          -- Tabs
-          TabLine = { bg = colors.surface0 },
-          TabLineSel = { fg = colors.text, bg = colors.mauve },
-
-          -- Sidebar
-          NvimTreeNormal = { fg = colors.text, bg = colors.mantle },
-
-          -- Git signs
-          GitSignsAdd = { fg = colors.green },
-          GitSignsChange = { fg = colors.yellow },
-          GitSignsDelete = { fg = colors.red },
-
-          -- Diagnostics
-          DiagnosticError = { fg = colors.red },
-          DiagnosticWarn = { fg = colors.yellow },
-          DiagnosticInfo = { fg = colors.sky },
-          DiagnosticHint = { fg = colors.teal },
-
-          -- LSP
-          ["@variable"] = { fg = colors.overlay2 },
-          ["@function"] = { fg = "#8400ff", style = { "bold" } },
+          -- Forçar o Verde Neon nas Keywords (Treesitter)
           ["@keyword"] = { fg = colors.green, style = { "bold" } },
+          ["@keyword.function"] = { fg = colors.green, style = { "bold" } },
+          ["@keyword.return"] = { fg = colors.green, style = { "bold" } },
+          ["@conditional"] = { fg = colors.green, style = { "bold" } },
+          ["@repeat"] = { fg = colors.green, style = { "bold" } },
+
+          -- Forçar o Roxo nas Funções (Treesitter)
+          ["@function"] = { fg = "#8400ff", style = { "bold" } },
+          ["@function.builtin"] = { fg = "#8400ff", style = { "bold" } },
+          ["@function.call"] = { fg = "#8400ff", style = { "bold" } },
+          ["@method"] = { fg = "#8400ff", style = { "bold" } },
+
+          -- Variáveis e Parâmetros
+          ["@variable"] = { fg = colors.overlay2 },
+          ["@parameter"] = { fg = colors.overlay2 },
+
+          -- Outros elementos
           ["@string"] = { fg = colors.teal },
-          ["@number"] = { fg = "#71f76c" },
-          ["@operator"] = { fg = colors.pink },
           ["@type"] = { fg = colors.yellow },
+          ["@operator"] = { fg = colors.pink },
           ["@punctuation"] = { fg = colors.pink },
+          ["@number"] = { fg = "#71f76c" },
+          ["@constant"] = { fg = "#71f76c" },
         }
       end,
 
@@ -158,15 +91,19 @@ return {
         nvimtree = true,
         treesitter = true,
         notify = true,
-        mini = { enabled = true },
-        noice = true,
         telescope = { enabled = true },
+        mini = true,
+        noice = true,
         which_key = true,
       },
     },
+    config = function(_, opts)
+      require("catppuccin").setup(opts)
+      vim.cmd.colorscheme("catppuccin") -- Aplica explicitamente na inicialização
+    end,
   },
 
-  -- Configurar LazyVim para usar o BearTheme
+  -- Configurar LazyVim para usar o BearTheme como padrão
   {
     "LazyVim/LazyVim",
     opts = {
