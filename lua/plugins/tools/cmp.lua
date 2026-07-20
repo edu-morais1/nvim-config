@@ -1,6 +1,8 @@
 -- lua/plugins/tools/cmp.lua
 return {
   "hrsh7th/nvim-cmp",
+  -- priority garante que este spec rode depois dos defaults do LazyVim
+  priority = 100,
   opts = function(_, opts)
     local cmp = require("cmp")
     local luasnip = require("luasnip")
@@ -21,41 +23,43 @@ return {
       }),
     }
 
-    opts.mapping = vim.tbl_extend("force", opts.mapping or {}, {
-      ["<C-n>"] = cmp.mapping(cmp.mapping.select_next_item(), { "i", "c" }),
-      ["<C-p>"] = cmp.mapping(cmp.mapping.select_prev_item(), { "i", "c" }),
-      ["<C-b>"] = cmp.mapping(cmp.mapping.scroll_docs(-4), { "i", "c" }),
-      ["<C-f>"] = cmp.mapping(cmp.mapping.scroll_docs(4), { "i", "c" }),
-      ["<C-Space>"] = cmp.mapping(cmp.mapping.complete(), { "i", "c" }),
-      ["<C-e>"] = cmp.mapping({ i = cmp.mapping.abort(), c = cmp.mapping.close() }),
-      ["<CR>"] = cmp.mapping.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = true }),
-      ["<Tab>"] = cmp.mapping(function(fallback)
-        if cmp.visible() then
-          local entry = cmp.get_selected_entry()
-          if entry and entry.source.name == "luasnip" then
-            -- Confirma e expande o snippet via luasnip
-            cmp.confirm({ behavior = cmp.ConfirmBehavior.Insert, select = true })
-          elseif luasnip.expand_or_jumpable() then
-            luasnip.expand_or_jump()
-          else
-            cmp.select_next_item()
-          end
-        elseif luasnip.expand_or_jumpable() then
-          luasnip.expand_or_jump()
+    -- Sobrescreve diretamente as keys que nos interessam no mapping já existente
+    -- ao invés de tbl_extend, que não garante precedência sobre o LazyVim
+    opts.mapping = opts.mapping or {}
+
+    opts.mapping["<C-n>"] = cmp.mapping(cmp.mapping.select_next_item(), { "i", "c" })
+    opts.mapping["<C-p>"] = cmp.mapping(cmp.mapping.select_prev_item(), { "i", "c" })
+    opts.mapping["<C-b>"] = cmp.mapping(cmp.mapping.scroll_docs(-4), { "i", "c" })
+    opts.mapping["<C-f>"] = cmp.mapping(cmp.mapping.scroll_docs(4), { "i", "c" })
+    opts.mapping["<C-Space>"] = cmp.mapping(cmp.mapping.complete(), { "i", "c" })
+    opts.mapping["<C-e>"] = cmp.mapping({ i = cmp.mapping.abort(), c = cmp.mapping.close() })
+    opts.mapping["<CR>"] = cmp.mapping.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = false })
+
+    opts.mapping["<Tab>"] = cmp.mapping(function(fallback)
+      if cmp.visible() then
+        local entry = cmp.get_selected_entry()
+        if entry then
+          -- Sempre confirma o item selecionado (snippets expandem automaticamente via luasnip source)
+          cmp.confirm({ behavior = cmp.ConfirmBehavior.Insert, select = true })
         else
-          fallback()
+          cmp.select_next_item()
         end
-      end, { "i", "s" }),
-      ["<S-Tab>"] = cmp.mapping(function(fallback)
-        if cmp.visible() then
-          cmp.select_prev_item()
-        elseif luasnip.jumpable(-1) then
-          luasnip.jump(-1)
-        else
-          fallback()
-        end
-      end, { "i", "s" }),
-    })
+      elseif luasnip.expand_or_jumpable() then
+        luasnip.expand_or_jump()
+      else
+        fallback()
+      end
+    end, { "i", "s" })
+
+    opts.mapping["<S-Tab>"] = cmp.mapping(function(fallback)
+      if cmp.visible() then
+        cmp.select_prev_item()
+      elseif luasnip.jumpable(-1) then
+        luasnip.jump(-1)
+      else
+        fallback()
+      end
+    end, { "i", "s" })
 
     opts.sources = cmp.config.sources({
       { name = "nvim_lsp", priority = 1000 },
@@ -100,7 +104,6 @@ return {
       }),
     }
 
-    -- ghost_text desativado para não conflitar com Copilot inline
     opts.experimental = { ghost_text = false }
 
     return opts
