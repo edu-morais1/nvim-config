@@ -6,6 +6,11 @@ return {
     local luasnip = require("luasnip")
     local lspkind = require("lspkind")
 
+    -- Load custom Lua snippets from lua/snippets/
+    require("luasnip.loaders.from_lua").lazy_load({
+      paths = { vim.fn.stdpath("config") .. "/lua/snippets" },
+    })
+
     opts.window = {
       completion = cmp.config.window.bordered({
         border = "rounded",
