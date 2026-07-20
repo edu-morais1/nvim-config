@@ -6,3 +6,7 @@ debug
 foo.*
 *.log
 data
+
+# Backups locais
+*.bak
+*.backup
