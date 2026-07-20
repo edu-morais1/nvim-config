@@ -11,12 +11,6 @@ return {
       paths = { vim.fn.stdpath("config") .. "/lua/snippets" },
     })
 
-    -- Disable cmp in Copilot suggestion context so Tab is never stolen
-    local function is_copilot_visible()
-      local ok, suggestion = pcall(require, "copilot.suggestion")
-      return ok and suggestion.is_visible()
-    end
-
     opts.window = {
       completion = cmp.config.window.bordered({
         border = "rounded",
@@ -36,12 +30,16 @@ return {
       ["<C-e>"] = cmp.mapping({ i = cmp.mapping.abort(), c = cmp.mapping.close() }),
       ["<CR>"] = cmp.mapping.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = true }),
       ["<Tab>"] = cmp.mapping(function(fallback)
-        -- Copilot tem prioridade zero aqui: Tab nunca chama o Copilot
-        if is_copilot_visible() then
-          -- ignora a sugestão do Copilot e continua o fluxo normal
-        end
         if cmp.visible() then
-          cmp.select_next_item()
+          local entry = cmp.get_selected_entry()
+          if entry and entry.source.name == "luasnip" then
+            -- Confirma e expande o snippet via luasnip
+            cmp.confirm({ behavior = cmp.ConfirmBehavior.Insert, select = true })
+          elseif luasnip.expand_or_jumpable() then
+            luasnip.expand_or_jump()
+          else
+            cmp.select_next_item()
+          end
         elseif luasnip.expand_or_jumpable() then
           luasnip.expand_or_jump()
         else
@@ -61,8 +59,8 @@ return {
 
     opts.sources = cmp.config.sources({
       { name = "nvim_lsp", priority = 1000 },
-      { name = "luasnip", priority = 750 },
-      { name = "path", priority = 500 },
+      { name = "luasnip",  priority = 750 },
+      { name = "path",     priority = 500 },
     }, {
       { name = "buffer", priority = 250 },
     })
@@ -102,7 +100,8 @@ return {
       }),
     }
 
-    opts.experimental = { ghost_text = false } -- desativa ghost_text do cmp para não conflitar com Copilot inline
+    -- ghost_text desativado para não conflitar com Copilot inline
+    opts.experimental = { ghost_text = false }
 
     return opts
   end,
