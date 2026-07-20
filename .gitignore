@@ -10,3 +10,4 @@ data
 # Backups locais
 *.bak
 *.backup
+lazy-lock.json

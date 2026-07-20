@@ -207,7 +207,6 @@ local function create_java_template()
   if vim.b.java_template_created then
     return
   end
-  vim.b.java_template_created = true
 
   local file_path = vim.fn.expand("%:p")
 
@@ -216,17 +215,10 @@ local function create_java_template()
   end
 
   local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
-
   for _, line in ipairs(lines) do
     if line:match("[^%s]") then
       return
     end
-  end
-
-  -- vim.uv substituiu vim.loop (deprecated no Neovim 0.10+)
-  local stat = vim.uv.fs_stat(file_path)
-  if stat and stat.size > 0 then
-    return
   end
 
   local pkg, class = extract_package_and_class(file_path)
@@ -235,6 +227,7 @@ local function create_java_template()
     return
   end
 
+  vim.b.java_template_created = true
   show_menu(pkg, class)
 end
 
@@ -248,10 +241,12 @@ end, {
   desc = "Generate Java class template (class|abstract|interface|enum|record|annotation|service|repository|controller)",
 })
 
-vim.api.nvim_create_autocmd({ "BufNewFile", "BufRead" }, {
+vim.api.nvim_create_autocmd("BufWinEnter", {
   pattern = "*.java",
   callback = function()
-    vim.schedule(create_java_template)
+    vim.schedule(function()
+      create_java_template()
+    end)
   end,
   group = vim.api.nvim_create_augroup("JavaTemplate", { clear = true }),
 })
