@@ -173,7 +173,6 @@ local function apply_template(type_key)
   vim.api.nvim_buf_set_lines(0, 0, -1, false, template)
   vim.notify("Created " .. class_types[type_key].name .. ": " .. class, vim.log.levels.INFO)
 
-  -- Posiciona cursor na última linha útil e entra em insert mode
   local last_line = #template - 1
   vim.api.nvim_win_set_cursor(0, { last_line, 4 })
   vim.cmd("startinsert")
@@ -231,6 +230,7 @@ local function create_java_template()
   show_menu(pkg, class)
 end
 
+-- User command to apply template manually
 vim.api.nvim_create_user_command("JavaTemplate", function(opts)
   apply_template(opts.args)
 end, {
@@ -241,6 +241,7 @@ end, {
   desc = "Generate Java class template (class|abstract|interface|enum|record|annotation|service|repository|controller)",
 })
 
+-- Autocmds for template creation on new/empty files
 local java_template_group = vim.api.nvim_create_augroup("JavaTemplate", { clear = true })
 
 vim.api.nvim_create_autocmd({ "BufNewFile", "BufReadPost" }, {
@@ -251,4 +252,41 @@ vim.api.nvim_create_autocmd({ "BufNewFile", "BufReadPost" }, {
     end)
   end,
   group = java_template_group,
+})
+
+-- FileType-specific settings for Java buffers
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "java",
+  group = java_template_group,
+  callback = function()
+    -- Indentation: 4 spaces (Java style guide)
+    vim.opt_local.tabstop = 4
+    vim.opt_local.shiftwidth = 4
+    vim.opt_local.expandtab = true
+    -- Column ruler at 120 chars (Google/Oracle Java style)
+    vim.opt_local.colorcolumn = "120"
+
+    -- Keymaps for Maven / Spring Boot
+    local opts = { buffer = true, silent = true }
+    vim.keymap.set("n", "<leader>jr", "<cmd>!mvn spring-boot:run<CR>", vim.tbl_extend("force", opts, { desc = "Maven: spring-boot:run" }))
+    vim.keymap.set("n", "<leader>jt", "<cmd>!mvn test<CR>", vim.tbl_extend("force", opts, { desc = "Maven: test" }))
+    vim.keymap.set("n", "<leader>jb", "<cmd>!mvn compile<CR>", vim.tbl_extend("force", opts, { desc = "Maven: compile" }))
+    vim.keymap.set("n", "<leader>jT", "<cmd>JavaTemplate<CR>", vim.tbl_extend("force", opts, { desc = "Java: pick class template" }))
+
+    -- Auto-organise imports on save via LSP code action
+    vim.api.nvim_create_autocmd("BufWritePre", {
+      buffer = 0,
+      group = java_template_group,
+      callback = function()
+        local clients = vim.lsp.get_clients({ bufnr = 0 })
+        if #clients == 0 then
+          return
+        end
+        vim.lsp.buf.code_action({
+          context = { only = { "source.organizeImports" } },
+          apply = true,
+        })
+      end,
+    })
+  end,
 })
