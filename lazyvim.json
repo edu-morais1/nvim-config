@@ -1,8 +1,11 @@
 {
   "extras": [
     "lazyvim.plugins.extras.ai.copilot-native",
+    "lazyvim.plugins.extras.dap.core",
     "lazyvim.plugins.extras.editor.aerial",
+    "lazyvim.plugins.extras.editor.mini-files",
     "lazyvim.plugins.extras.editor.neo-tree",
+    "lazyvim.plugins.extras.editor.refactoring",
     "lazyvim.plugins.extras.lang.git",
     "lazyvim.plugins.extras.lang.java",
     "lazyvim.plugins.extras.lang.json",
@@ -11,6 +14,7 @@
     "lazyvim.plugins.extras.lang.sql",
     "lazyvim.plugins.extras.lang.toml",
     "lazyvim.plugins.extras.lang.yaml",
+    "lazyvim.plugins.extras.test.core",
     "lazyvim.plugins.extras.util.dot",
     "lazyvim.plugins.extras.util.gitui",
     "lazyvim.plugins.extras.util.mini-hipatterns",

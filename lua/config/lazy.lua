@@ -14,7 +14,8 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 vim.opt.termguicolors = true
-
+vim.env.ANTHROPIC_API_KEY =
+  "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"
 require("lazy").setup({
   spec = {
     -- LazyVim e seus plugins base
@@ -22,7 +23,7 @@ require("lazy").setup({
 
     -- Extras de linguagem (LSP, Treesitter, formatters automáticos)
     { import = "lazyvim.plugins.extras.lang.python" }, -- Python: pyright + ruff
-    { import = "lazyvim.plugins.extras.lang.java" },   -- Java: jdtls
+    { import = "lazyvim.plugins.extras.lang.java" }, -- Java: jdtls
 
     -- Extras de ferramentas
     { import = "lazyvim.plugins.extras.util.mini-hipatterns" }, -- Highlight de cores no código
