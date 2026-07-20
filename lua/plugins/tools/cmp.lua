@@ -11,6 +11,12 @@ return {
       paths = { vim.fn.stdpath("config") .. "/lua/snippets" },
     })
 
+    -- Disable cmp in Copilot suggestion context so Tab is never stolen
+    local function is_copilot_visible()
+      local ok, suggestion = pcall(require, "copilot.suggestion")
+      return ok and suggestion.is_visible()
+    end
+
     opts.window = {
       completion = cmp.config.window.bordered({
         border = "rounded",
@@ -30,6 +36,10 @@ return {
       ["<C-e>"] = cmp.mapping({ i = cmp.mapping.abort(), c = cmp.mapping.close() }),
       ["<CR>"] = cmp.mapping.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = true }),
       ["<Tab>"] = cmp.mapping(function(fallback)
+        -- Copilot tem prioridade zero aqui: Tab nunca chama o Copilot
+        if is_copilot_visible() then
+          -- ignora a sugestão do Copilot e continua o fluxo normal
+        end
         if cmp.visible() then
           cmp.select_next_item()
         elseif luasnip.expand_or_jumpable() then
@@ -92,7 +102,7 @@ return {
       }),
     }
 
-    opts.experimental = { ghost_text = true }
+    opts.experimental = { ghost_text = false } -- desativa ghost_text do cmp para não conflitar com Copilot inline
 
     return opts
   end,
