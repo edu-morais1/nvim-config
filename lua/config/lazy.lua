@@ -14,8 +14,7 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 vim.opt.termguicolors = true
-vim.env.ANTHROPIC_API_KEY =
-  "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"
+vim.env.ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")
 require("lazy").setup({
   spec = {
     -- LazyVim e seus plugins base
