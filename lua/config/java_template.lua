@@ -223,7 +223,7 @@ local function create_java_template()
 
   local pkg, class = extract_package_and_class(file_path)
 
-  if not class or not class:match("^%u") then
+  if not class or class == "" then
     return
   end
 
@@ -241,12 +241,14 @@ end, {
   desc = "Generate Java class template (class|abstract|interface|enum|record|annotation|service|repository|controller)",
 })
 
-vim.api.nvim_create_autocmd("BufWinEnter", {
+local java_template_group = vim.api.nvim_create_augroup("JavaTemplate", { clear = true })
+
+vim.api.nvim_create_autocmd({ "BufNewFile", "BufReadPost" }, {
   pattern = "*.java",
   callback = function()
     vim.schedule(function()
       create_java_template()
     end)
   end,
-  group = vim.api.nvim_create_augroup("JavaTemplate", { clear = true }),
+  group = java_template_group,
 })
